@@ -1,0 +1,254 @@
+{% extends 'courses/base.html' %}
+
+{% block title %}Главная — EdPro{% endblock %}
+
+{% block content %}
+<!-- Hero секция -->
+<div class="row align-items-center mb-5 py-5 fade-in-up">
+    <div class="col-lg-6">
+        <h1 class="display-3 fw-bold mb-4" style="line-height: 1.2;">
+            EdPro — платформа для развития навыков
+        </h1>
+        <p class="lead mb-4" style="font-size: 1.25rem; line-height: 1.8;">
+            Онлайн‑курсы от практикующих преподавателей: программирование, дизайн,
+            языки и многое другое. Выбирайте курс, учитесь в удобном темпе и
+            собирайте своё портфолио.
+        </p>
+        <ul class="list-unstyled mb-4" style="font-size: 1.1rem;">
+            <li class="mb-2">
+                <i class="bi bi-check-circle-fill me-2" style="color: #43e97b;"></i>
+                Удобный выбор курсов по уровню и тематике
+            </li>
+            <li class="mb-2">
+                <i class="bi bi-check-circle-fill me-2" style="color: #43e97b;"></i>
+                Бесплатные и пробные программы для старта
+            </li>
+            <li class="mb-2">
+                <i class="bi bi-check-circle-fill me-2" style="color: #43e97b;"></i>
+                Истории студентов и их успехи
+            </li>
+        </ul>
+        <div class="d-flex flex-wrap gap-3">
+            <a href="{% url 'course_list' %}" class="btn btn-primary btn-lg">
+                <i class="bi bi-arrow-right"></i> Перейти к курсам
+            </a>
+            <a href="{% url 'course_recommendation' %}" class="btn btn-outline-primary btn-lg">
+                <i class="bi bi-search"></i> Подбор курса
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-6 text-lg-end mt-4 mt-lg-0">
+        <div class="card shadow-lg d-inline-block" style="max-width: 400px; width: 100%;">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3"
+                         style="width: 50px; height: 50px; background: var(--primary-gradient);">
+                        <i class="bi bi-graph-up-arrow text-white" style="font-size: 1.5rem;"></i>
+                    </div>
+                    <div>
+                        <h5 class="card-title mb-0">Статистика платформы</h5>
+                        <p class="text-muted mb-0 small">Актуальные данные</p>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted">Доступных курсов</span>
+                        <span class="fw-bold" style="font-size: 1.5rem; background: var(--primary-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                            {{ total_courses }}
+                        </span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted">Онлайн‑формат</span>
+                        <i class="bi bi-check-circle-fill" style="color: #43e97b;"></i>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted">Поддержка 24/7</span>
+                        <i class="bi bi-check-circle-fill" style="color: #43e97b;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Популярные курсы -->
+<div class="mb-5 fade-in-up" style="animation-delay: 0.2s;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">
+            <i class="bi bi-star-fill me-2" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;"></i>
+            Популярные курсы
+        </h2>
+        <a href="{% url 'course_list' %}" class="btn btn-outline-primary">
+            Смотреть все <i class="bi bi-arrow-right"></i>
+        </a>
+    </div>
+    <div class="row g-4">
+        {% for course in featured_courses %}
+        <div class="col-md-4">
+            <div class="card h-100 course-card position-relative">
+                {% if course.is_popular %}
+                <span class="badge bg-warning text-white popular-badge">
+                    <i class="bi bi-star-fill"></i> Популярный
+                </span>
+                {% endif %}
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-3">{{ course.title }}</h5>
+                    <p class="card-text text-muted mb-3" style="min-height: 60px;">{{ course.description|truncatechars:100 }}</p>
+                    <div class="mb-3">
+                        {% if course.is_free %}
+                            <span class="badge bg-success me-2">
+                                <i class="bi bi-gift-fill"></i> Бесплатный
+                            </span>
+                        {% else %}
+                            <span class="badge bg-primary me-2">{{ course.price }} ₽</span>
+                        {% endif %}
+                        <span class="badge" style="background: rgba(255, 255, 255, 0.1); color: var(--text-secondary);">
+                            {{ course.get_level_display }}
+                        </span>
+                    </div>
+                    <a href="{% url 'course_detail' course.pk %}" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-arrow-right"></i> Подробнее
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="card text-center p-5">
+                <i class="bi bi-inbox" style="font-size: 3rem; color: var(--text-secondary); margin-bottom: 1rem;"></i>
+                <p class="text-muted mb-0">Пока нет курсов. Скоро здесь появятся первые программы обучения.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Бесплатные курсы -->
+<div class="mb-5 fade-in-up" style="animation-delay: 0.4s;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-2">
+                <i class="bi bi-gift-fill me-2" style="background: var(--success-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                Бесплатные курсы и акции
+            </h2>
+            <p class="text-muted mb-0">
+                Для новых пользователей мы предлагаем бесплатные и пробные курсы, чтобы вы могли
+                попробовать формат EdPro перед покупкой.
+            </p>
+        </div>
+    </div>
+    <div class="row g-4">
+        {% for course in free_courses %}
+        <div class="col-md-4">
+            <div class="card h-100 course-card" style="border: 2px solid rgba(67, 233, 123, 0.3);">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h5 class="card-title mb-0">{{ course.title }}</h5>
+                        <span class="badge bg-success">
+                            <i class="bi bi-gift-fill"></i> Бесплатно
+                        </span>
+                    </div>
+                    <p class="card-text text-muted mb-3" style="min-height: 60px;">{{ course.description|truncatechars:100 }}</p>
+                    <a href="{% url 'course_detail' course.pk %}" class="btn btn-success w-100">
+                        <i class="bi bi-play-fill"></i> Начать обучение
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>
+                В данный момент бесплатных курсов нет. Следите за новостями и розыгрышами на платформе EdPro.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Истории студентов -->
+<div class="mb-5 fade-in-up" style="animation-delay: 0.6s;">
+    <h2 class="mb-4">
+        <i class="bi bi-people-fill me-2" style="background: var(--accent-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;"></i>
+        Истории студентов
+    </h2>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center me-3"
+                             style="width: 50px; height: 50px; background: var(--primary-gradient);">
+                            <span class="text-white fw-bold">А</span>
+                        </div>
+                        <div>
+                            <h5 class="card-title mb-0">Алексей, 21 год</h5>
+                            <small class="text-muted">Студент</small>
+                        </div>
+                    </div>
+                    <p class="card-text text-muted">
+                        Начал с базового курса по Python, собрал портфолио проектов и устроился на первую стажировку
+                        через 3 месяца.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center me-3"
+                             style="width: 50px; height: 50px; background: var(--secondary-gradient);">
+                            <span class="text-white fw-bold">М</span>
+                        </div>
+                        <div>
+                            <h5 class="card-title mb-0">Мария, 27 лет</h5>
+                            <small class="text-muted">Фрилансер</small>
+                        </div>
+                    </div>
+                    <p class="card-text text-muted">
+                        Прошла курс по веб‑дизайну, сделала несколько учебных проектов и начала брать первые заказы на фрилансе.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center me-3"
+                             style="width: 50px; height: 50px; background: var(--accent-gradient);">
+                            <span class="text-white fw-bold">И</span>
+                        </div>
+                        <div>
+                            <h5 class="card-title mb-0">Игорь, 34 года</h5>
+                            <small class="text-muted">Профессионал</small>
+                        </div>
+                    </div>
+                    <p class="card-text text-muted">
+                        Использует EdPro для повышения квалификации: каждый год проходит 1–2 новых курса и обновляет свои навыки.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CTA секция -->
+<div class="row fade-in-up" style="animation-delay: 0.8s;">
+    <div class="col-12">
+        <div class="card text-center p-5" style="background: var(--primary-gradient); border: none;">
+            <div class="card-body">
+                <h3 class="card-title mb-3 text-white">Нужна помощь с выбором курса?</h3>
+                <p class="card-text text-white mb-4" style="opacity: 0.9;">
+                    Наши специалисты помогут вам выбрать подходящий курс, ответят на все вопросы и расскажут о программах обучения.
+                </p>
+                <a href="{% url 'contact' %}" class="btn btn-light btn-lg">
+                    <i class="bi bi-question-circle"></i> Связаться с нами
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

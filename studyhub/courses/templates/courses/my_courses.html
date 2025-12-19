@@ -1,0 +1,302 @@
+{% extends 'courses/base.html' %}
+
+{% block title %}Мои курсы - StudyHub{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Заголовок с приветствием -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>
+            <i class="bi bi-journal-bookmark text-primary"></i>
+            Мои курсы
+        </h1>
+        {% if user.user_profile and user.user_profile.is_tutor_or_admin %}
+        <a href="{% url 'course_create' %}" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Новый курс
+        </a>
+        {% endif %}
+    </div>
+    
+    {% if is_student %}
+    <!-- ВИД ДЛЯ СТУДЕНТОВ -->
+    <!-- Блок статистики для студентов -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card text-white bg-primary">
+                <div class="card-body text-center">
+                    <h2 class="card-title">{{ enrolled_count }}</h2>
+                    <p class="card-text">Курсов записано</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card text-white bg-info">
+                <div class="card-body text-center">
+                    <h2 class="card-title">{{ total_hours|floatformat:0 }}</h2>
+                    <p class="card-text">Часов обучения</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Список курсов для студентов -->
+    {% if enrolled_courses %}
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Курсы, на которые вы записались</h5>
+        </div>
+        <div class="card-body">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                {% for course in enrolled_courses %}
+                <div class="col">
+                    <div class="card h-100 course-card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a href="{% url 'course_detail' course.pk %}" class="text-decoration-none">
+                                    {{ course.title }}
+                                </a>
+                            </h5>
+                            <p class="card-text text-muted">{{ course.description|truncatechars:100 }}</p>
+                            <div class="mb-2">
+                                {% if course.is_free %}
+                                    <span class="badge bg-success">Бесплатный</span>
+                                {% else %}
+                                    <span class="badge bg-primary">{{ course.price }} ₽</span>
+                                {% endif %}
+                                <span class="badge bg-light text-dark ms-1">{{ course.get_level_display }}</span>
+                            </div>
+                            <div class="text-muted small mb-2">
+                                <div><i class="bi bi-person"></i> {{ course.author.username }}</div>
+                                <div><i class="bi bi-clock"></i> {{ course.duration_hours }} часов</div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="{% url 'course_detail' course.pk %}" class="btn btn-primary btn-sm w-100">
+                                <i class="bi bi-arrow-right"></i> Перейти к курсу
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="card">
+        <div class="card-body text-center py-5">
+            <i class="bi bi-journal-x display-1 text-muted mb-3"></i>
+            <h3>Вы пока не записались ни на один курс</h3>
+            <p class="text-muted">Перейдите в раздел «Курсы», чтобы выбрать интересующие вас программы обучения</p>
+            <a href="{% url 'course_list' %}" class="btn btn-primary btn-lg mt-3">
+                <i class="bi bi-list-ul"></i> Перейти к курсам
+            </a>
+        </div>
+    </div>
+    {% endif %}
+    
+    {% elif is_tutor %}
+    <!-- ВИД ДЛЯ ПРЕПОДАВАТЕЛЕЙ И АДМИНИСТРАТОРОВ -->
+    <!-- Блок статистики для преподавателей -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body text-center">
+                    <h2 class="card-title">{{ enrolled_count }}</h2>
+                    <p class="card-text">Курсов записано</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success">
+                <div class="card-body text-center">
+                    <h2 class="card-title">{{ created_count }}</h2>
+                    <p class="card-text">Создано курсов</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body text-center">
+                    <h2 class="card-title">{{ published_count }}</h2>
+                    <p class="card-text">Опубликовано</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info">
+                <div class="card-body text-center">
+                    <h2 class="card-title">{{ draft_count }}</h2>
+                    <p class="card-text">Черновиков</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Прогресс-бар для созданных курсов -->
+    {% if created_count > 0 %}
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Статистика публикаций</h5>
+            <div class="progress" style="height: 25px;">
+                <div class="progress-bar bg-success" role="progressbar" 
+                     style="width: {{ published_percent }}%">
+                    Опубликовано: {{ published_percent }}%
+                </div>
+                <div class="progress-bar bg-warning" role="progressbar" 
+                     style="width: {{ draft_percent }}%">
+                    Черновики: {{ draft_percent }}%
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Курсы, на которые записались -->
+    {% if enrolled_courses %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-bookmark-check"></i> Курсы, на которые вы записались ({{ enrolled_count }})</h5>
+        </div>
+        <div class="card-body">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                {% for course in enrolled_courses %}
+                <div class="col">
+                    <div class="card h-100 course-card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a href="{% url 'course_detail' course.pk %}" class="text-decoration-none">
+                                    {{ course.title }}
+                                </a>
+                            </h5>
+                            <p class="card-text text-muted">{{ course.description|truncatechars:100 }}</p>
+                            <div class="mb-2">
+                                {% if course.is_free %}
+                                    <span class="badge bg-success">Бесплатный</span>
+                                {% else %}
+                                    <span class="badge bg-primary">{{ course.price }} ₽</span>
+                                {% endif %}
+                                <span class="badge bg-light text-dark ms-1">{{ course.get_level_display }}</span>
+                            </div>
+                            <div class="text-muted small mb-2">
+                                <div><i class="bi bi-person"></i> {{ course.author.username }}</div>
+                                <div><i class="bi bi-clock"></i> {{ course.duration_hours }} часов</div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="{% url 'course_detail' course.pk %}" class="btn btn-primary btn-sm w-100">
+                                <i class="bi bi-arrow-right"></i> Перейти к курсу
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Курсы, которые создали -->
+    {% if created_courses %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-journal-text"></i> Курсы, которые вы создали ({{ created_count }})</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr style="color: var(--text-primary);">
+                            <th style="color: var(--text-primary); border-color: var(--border-color);">Название</th>
+                            <th style="color: var(--text-primary); border-color: var(--border-color);">Статус</th>
+                            <th style="color: var(--text-primary); border-color: var(--border-color);">Продолжительность</th>
+                            <th style="color: var(--text-primary); border-color: var(--border-color);">Дата создания</th>
+                            <th style="color: var(--text-primary); border-color: var(--border-color);">Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for course in created_courses %}
+                        <tr style="color: var(--text-primary);">
+                            <td style="color: var(--text-primary); border-color: var(--border-color);">
+                                <a href="{% url 'course_detail' course.pk %}" class="text-decoration-none" style="color: var(--text-primary);">
+                                    {{ course.title|truncatechars:40 }}
+                                </a>
+                            </td>
+                            <td style="color: var(--text-primary); border-color: var(--border-color);">
+                                {% if course.is_published %}
+                                <span class="badge bg-success">Опубликован</span>
+                                {% else %}
+                                <span class="badge bg-warning">Черновик</span>
+                                {% endif %}
+                            </td>
+                            <td style="color: var(--text-primary); border-color: var(--border-color);">{{ course.duration_hours }} ч.</td>
+                            <td style="color: var(--text-primary); border-color: var(--border-color);">{{ course.created_at|date:"d.m.Y" }}</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{% url 'course_detail' course.pk %}" 
+                                       class="btn btn-outline-primary" title="Просмотр">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    {% if user == course.author or user.user_profile.is_admin %}
+                                    <a href="{% url 'course_update' course.pk %}" 
+                                       class="btn btn-outline-warning" title="Редактировать">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a href="{% url 'course_delete' course.pk %}" 
+                                       class="btn btn-outline-danger" title="Удалить">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Информация о последнем созданном курсе -->
+    {% if latest_created_course %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-star"></i> Последний созданный курс</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <h6>{{ latest_created_course.title }}</h6>
+                    <p class="text-muted">{{ latest_created_course.description|truncatechars:150 }}</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="{% url 'course_detail' latest_created_course.pk %}" 
+                       class="btn btn-primary">Перейти к курсу</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endif %}
+    
+    {% else %}
+    <!-- Если нет ни записанных, ни созданных курсов -->
+    <div class="card">
+        <div class="card-body text-center py-5">
+            <i class="bi bi-journal-x display-1 text-muted mb-3"></i>
+            <h3>У вас пока нет курсов</h3>
+            {% if user.user_profile and user.user_profile.is_tutor_or_admin %}
+            <p class="text-muted">Создайте свой первый курс и начните преподавать на StudyHub</p>
+            <a href="{% url 'course_create' %}" class="btn btn-primary btn-lg mt-3">
+                <i class="bi bi-plus-circle"></i> Создать первый курс
+            </a>
+            {% else %}
+            <p class="text-muted">Перейдите в раздел «Курсы», чтобы выбрать интересующие вас программы обучения</p>
+            <a href="{% url 'course_list' %}" class="btn btn-primary btn-lg mt-3">
+                <i class="bi bi-list-ul"></i> Перейти к курсам
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

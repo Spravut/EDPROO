@@ -1,0 +1,175 @@
+{% extends 'courses/base.html' %}
+
+{% block title %}Обращения — EdPro{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="bi bi-envelope-exclamation"></i> Обращения пользователей</h1>
+        <div>
+            <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Назад
+            </a>
+        </div>
+    </div>
+
+    <!-- Статистика -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h5 class="card-title">В рассмотрении</h5>
+                    <h2 class="mb-0">{{ pending_count }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5 class="card-title">Выполнено</h5>
+                    <h2 class="mb-0">{{ completed_count }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <h5 class="card-title">Всего</h5>
+                    <h2 class="mb-0">{{ total_count }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Фильтры -->
+    <div class="mb-3">
+        <div class="btn-group" role="group">
+            <a href="?status=pending" 
+               class="btn {% if current_status == 'pending' %}btn-warning{% else %}btn-outline-warning{% endif %}">
+                В рассмотрении ({{ pending_count }})
+            </a>
+            <a href="?status=completed" 
+               class="btn {% if current_status == 'completed' %}btn-success{% else %}btn-outline-success{% endif %}">
+                Выполнено ({{ completed_count }})
+            </a>
+            <a href="?status=all" 
+               class="btn {% if current_status == 'all' %}btn-info{% else %}btn-outline-info{% endif %}">
+                Все ({{ total_count }})
+            </a>
+        </div>
+    </div>
+
+    <!-- Список обращений -->
+    {% if requests %}
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Дата</th>
+                            <th>Имя</th>
+                            <th>Контакт</th>
+                            <th>Тип</th>
+                            <th>Сообщение</th>
+                            <th>Статус</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request in requests %}
+                        <tr>
+                            <td>
+                                <small>{{ request.created_at|date:"d.m.Y H:i" }}</small>
+                            </td>
+                            <td><strong>{{ request.name }}</strong></td>
+                            <td>
+                                <small>{{ request.contact }}</small>
+                            </td>
+                            <td>
+                                {% if request.contact_type %}
+                                    <span class="badge bg-secondary">{{ request.contact_type }}</span>
+                                {% else %}
+                                    <span class="text-muted">—</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div style="max-width: 300px;">
+                                    <p class="mb-0 small">{{ request.message|truncatechars:100 }}</p>
+                                </div>
+                            </td>
+                            <td>
+                                {% if request.status == 'pending' %}
+                                    <span class="badge bg-warning">В рассмотрении</span>
+                                {% else %}
+                                    <span class="badge bg-success">Выполнено</span>
+                                    {% if request.completed_at %}
+                                        <br><small class="text-muted">{{ request.completed_at|date:"d.m.Y" }}</small>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if request.status == 'pending' %}
+                                    <form method="post" action="{% url 'support_request_update_status' request.pk %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="status" value="completed">
+                                        <button type="submit" class="btn btn-success btn-sm">
+                                            <i class="bi bi-check-circle"></i> Выполнено
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <form method="post" action="{% url 'support_request_update_status' request.pk %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="status" value="pending">
+                                        <button type="submit" class="btn btn-warning btn-sm">
+                                            <i class="bi bi-arrow-counterclockwise"></i> Вернуть
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Пагинация -->
+    {% if is_paginated %}
+    <nav aria-label="Навигация по страницам" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}">Назад</a>
+            </li>
+            {% endif %}
+            
+            <li class="page-item disabled">
+                <span class="page-link">Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+            </li>
+            
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}">Вперед</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i>
+        {% if current_status == 'pending' %}
+            Нет обращений в рассмотрении.
+        {% elif current_status == 'completed' %}
+            Нет выполненных обращений.
+        {% else %}
+            Нет обращений.
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+

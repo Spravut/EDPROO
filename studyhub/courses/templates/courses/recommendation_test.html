@@ -1,0 +1,265 @@
+{% extends 'courses/base.html' %}
+
+{% block title %}Подбор курса — EdPro{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <h1 class="mb-4">
+                <i class="bi bi-search text-primary"></i> Подбор курса
+            </h1>
+            <p class="text-muted mb-4">
+                Ответьте на несколько вопросов — мы подберём для вас подходящие курсы на основе ваших интересов и предпочтений.
+            </p>
+
+            <form method="get" class="mb-5">
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="bi bi-star"></i> Ваши интересы</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">{{ form.coding_interest.label }}</label>
+                            <div class="ms-3">
+                                {% for choice in form.coding_interest %}
+                                    <div class="form-check">
+                                        {{ choice.tag }}
+                                        <label class="form-check-label" for="{{ choice.id_for_label }}">
+                                            {{ choice.choice_label }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <small class="form-text text-muted">{{ form.coding_interest.help_text }}</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">{{ form.design_interest.label }}</label>
+                            <div class="ms-3">
+                                {% for choice in form.design_interest %}
+                                    <div class="form-check">
+                                        {{ choice.tag }}
+                                        <label class="form-check-label" for="{{ choice.id_for_label }}">
+                                            {{ choice.choice_label }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <small class="form-text text-muted">{{ form.design_interest.help_text }}</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">{{ form.web_development.label }}</label>
+                            <div class="ms-3">
+                                {% for choice in form.web_development %}
+                                    <div class="form-check">
+                                        {{ choice.tag }}
+                                        <label class="form-check-label" for="{{ choice.id_for_label }}">
+                                            {{ choice.choice_label }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <small class="form-text text-muted">{{ form.web_development.help_text }}</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">{{ form.mobile_development.label }}</label>
+                            <div class="ms-3">
+                                {% for choice in form.mobile_development %}
+                                    <div class="form-check">
+                                        {{ choice.tag }}
+                                        <label class="form-check-label" for="{{ choice.id_for_label }}">
+                                            {{ choice.choice_label }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <small class="form-text text-muted">{{ form.mobile_development.help_text }}</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">{{ form.database_interest.label }}</label>
+                            <div class="ms-3">
+                                {% for choice in form.database_interest %}
+                                    <div class="form-check">
+                                        {{ choice.tag }}
+                                        <label class="form-check-label" for="{{ choice.id_for_label }}">
+                                            {{ choice.choice_label }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <small class="form-text text-muted">{{ form.database_interest.help_text }}</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">{{ form.ml_interest.label }}</label>
+                            <div class="ms-3">
+                                {% for choice in form.ml_interest %}
+                                    <div class="form-check">
+                                        {{ choice.tag }}
+                                        <label class="form-check-label" for="{{ choice.id_for_label }}">
+                                            {{ choice.choice_label }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <small class="form-text text-muted">{{ form.ml_interest.help_text }}</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="bi bi-person-workspace"></i> Ваши предпочтения</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">{{ form.team_work.label }}</label>
+                            <div class="ms-3">
+                                {% for choice in form.team_work %}
+                                    <div class="form-check">
+                                        {{ choice.tag }}
+                                        <label class="form-check-label" for="{{ choice.id_for_label }}">
+                                            {{ choice.choice_label }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <small class="form-text text-muted">{{ form.team_work.help_text }}</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">{{ form.learning_format.label }}</label>
+                            <div class="ms-3">
+                                {% for choice in form.learning_format %}
+                                    <div class="form-check">
+                                        {{ choice.tag }}
+                                        <label class="form-check-label" for="{{ choice.id_for_label }}">
+                                            {{ choice.choice_label }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <small class="form-text text-muted">{{ form.learning_format.help_text }}</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">{{ form.study_time.label }}</label>
+                            <div class="ms-3">
+                                {% for choice in form.study_time %}
+                                    <div class="form-check">
+                                        {{ choice.tag }}
+                                        <label class="form-check-label" for="{{ choice.id_for_label }}">
+                                            {{ choice.choice_label }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <small class="form-text text-muted">{{ form.study_time.help_text }}</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">{{ form.theory_practice.label }}</label>
+                            <div class="ms-3">
+                                {% for choice in form.theory_practice %}
+                                    <div class="form-check">
+                                        {{ choice.tag }}
+                                        <label class="form-check-label" for="{{ choice.id_for_label }}">
+                                            {{ choice.choice_label }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <small class="form-text text-muted">{{ form.theory_practice.help_text }}</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="bi bi-gear"></i> Дополнительные параметры</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">{{ form.level.label }}</label>
+                            {{ form.level }}
+                            <small class="form-text text-muted d-block">{{ form.level.help_text }}</small>
+                        </div>
+
+                        <div class="form-check">
+                            {{ form.free_only }}
+                            <label class="form-check-label" for="{{ form.free_only.id_for_label }}">
+                                {{ form.free_only.label }}
+                            </label>
+                            <small class="form-text text-muted d-block">{{ form.free_only.help_text }}</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-search"></i> Подобрать курсы
+                    </button>
+                </div>
+            </form>
+
+            {% if result_courses %}
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h3 class="mb-0">
+                            <i class="bi bi-check-circle"></i> Рекомендуемые курсы (найдено: {{ result_courses|length }})
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                            {% for course in result_courses %}
+                            <div class="col">
+                                <div class="card h-100 shadow-sm">
+                                    {% if course.category %}
+                                    <div class="card-header bg-light">
+                                        <small class="text-muted">{{ course.category.name }}</small>
+                                    </div>
+                                    {% endif %}
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <a href="{% url 'course_detail' course.pk %}" class="text-decoration-none">
+                                                {{ course.title }}
+                                            </a>
+                                        </h5>
+                                        <p class="card-text text-muted">{{ course.description|truncatechars:120 }}</p>
+                                        <div class="mb-2">
+                                            {% if course.is_free %}
+                                                <span class="badge bg-success">Бесплатный</span>
+                                            {% else %}
+                                                <span class="badge bg-primary">{{ course.price }} ₽</span>
+                                            {% endif %}
+                                            <span class="badge bg-light text-dark ms-1">{{ course.get_level_display }}</span>
+                                        </div>
+                                        <div class="text-muted small mb-2">
+                                            <div><i class="bi bi-person"></i> {{ course.author.username }}</div>
+                                            <div><i class="bi bi-clock"></i> {{ course.duration_hours }} часов</div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-transparent">
+                                        <a href="{% url 'course_detail' course.pk %}" class="btn btn-outline-primary btn-sm w-100">
+                                            <i class="bi bi-arrow-right"></i> Перейти к курсу
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% elif request.GET.coding_interest %}
+                <div class="alert alert-info mt-4">
+                    <i class="bi bi-info-circle"></i> По заданным условиям курсы не найдены. Попробуйте изменить параметры поиска.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
