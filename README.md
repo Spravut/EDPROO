@@ -285,37 +285,98 @@ python manage.py runserver
 
 ```
 edpro-platform-main/
-├── studyhub/                    # Основной проект Django
-│   ├── courses/                 # Приложение курсов
-│   │   ├── models.py            # Модели данных (Course, Module, Lesson, Review и др.)
-│   │   ├── views.py             # Представления (Class-Based Views)
-│   │   ├── urls.py              # URL-маршруты приложения
-│   │   ├── forms.py             # Формы для валидации данных
-│   │   ├── admin.py             # Настройки админ-панели
-│   │   ├── mixins.py            # Миксины для контроля доступа
-│   │   ├── signals.py           # Django signals (если есть)
-│   │   ├── management/          # Management-команды
+├── studyhub/                                    # Основной проект Django
+│   ├── courses/                                 # Приложение курсов
+│   │   ├── __init__.py                          # Инициализация приложения
+│   │   ├── models.py                            # Модели данных (Course, Module, Lesson, Review и др.)
+│   │   ├── views.py                             # Представления (Class-Based Views)
+│   │   ├── urls.py                              # URL-маршруты приложения
+│   │   ├── forms.py                             # Формы для валидации данных
+│   │   ├── admin.py                             # Настройки админ-панели
+│   │   ├── apps.py                              # Конфигурация приложения
+│   │   ├── mixins.py                            # Миксины для контроля доступа
+│   │   ├── signals.py                           # Django signals
+│   │   ├── tests.py                             # Тесты приложения
+│   │   ├── management/                          # Management-команды
+│   │   │   ├── __init__.py
 │   │   │   └── commands/
-│   │   │       ├── create_admin.py
-│   │   │       └── create_sample_data.py
-│   │   ├── migrations/          # Миграции базы данных
-│   │   └── templates/           # HTML-шаблоны
-│   │       └── courses/
-│   ├── studyhub/                # Настройки проекта
-│   │   ├── settings.py           # Конфигурация Django
-│   │   ├── urls.py              # Главные URL-маршруты
-│   │   ├── wsgi.py              # WSGI-конфигурация
-│   │   └── asgi.py              # ASGI-конфигурация
-│   ├── media/                   # Загруженные файлы (аватары)
-│   ├── db.sqlite3               # База данных SQLite
-│   └── manage.py                # Утилита управления Django
-├── venv/                        # Виртуальное окружение Python
-├── requirements.txt             # Зависимости проекта
-├── README.md                    # Документация (этот файл)
-└── docs/                        # Дополнительная документация
-    ├── er_diagram.png           # ER-диаграмма БД
-    ├── architecture.png          # Архитектурная схема
-    └── screenshots/             # Скриншоты приложения
+│   │   │       ├── __init__.py
+│   │   │       ├── create_admin.py              # Команда создания администратора
+│   │   │       └── create_sample_data.py        # Команда создания тестовых данных
+│   │   ├── migrations/                          # Миграции базы данных
+│   │   │   ├── __init__.py
+│   │   │   ├── 0001_initial.py                  # Начальная миграция
+│   │   │   ├── 0002_course_duration_hours.py
+│   │   │   ├── 0003_profile.py
+│   │   │   ├── 0004_review.py
+│   │   │   ├── 0005_enrollment.py
+│   │   │   ├── 0006_userprofile.py
+│   │   │   ├── 0007_module_lesson.py
+│   │   │   ├── 0008_progress.py
+│   │   │   ├── 0009_lesson_is_published.py
+│   │   │   ├── 0010_assistantcategory_supportrequest_and_more.py
+│   │   │   ├── 0011_alter_userprofile_role.py
+│   │   │   └── 0012_alter_supportrequest_status.py
+│   │   └── templates/                           # HTML-шаблоны
+│   │       ├── courses/                         # Шаблоны приложения courses
+│   │       │   ├── about.html                   # Страница "О нас"
+│   │       │   ├── add_review.html              # Форма добавления отзыва
+│   │       │   ├── admin_stats.html             # Страница аналитики для администраторов
+│   │       │   ├── assistant_contact.html       # Форма обратной связи ассистента
+│   │       │   ├── assistant_faq.html          # FAQ ассистента
+│   │       │   ├── base.html                    # Базовый шаблон
+│   │       │   ├── cart.html                    # Страница корзины
+│   │       │   ├── checkout.html                # Страница оформления заказа
+│   │       │   ├── contact.html                 # Страница контактов
+│   │       │   ├── contact_form.html            # Форма обратной связи
+│   │       │   ├── course_confirm_delete.html    # Подтверждение удаления курса
+│   │       │   ├── course_detail.html            # Детальная страница курса
+│   │       │   ├── course_form.html             # Форма создания/редактирования курса
+│   │       │   ├── course_list.html             # Список курсов
+│   │       │   ├── enroll_form.html              # Форма записи на курс
+│   │       │   ├── home.html                    # Главная страница
+│   │       │   ├── lesson_detail.html           # Детальная страница урока
+│   │       │   ├── lesson_form.html             # Форма создания/редактирования урока
+│   │       │   ├── login.html                    # Страница входа
+│   │       │   ├── module_confirm_delete.html    # Подтверждение удаления модуля
+│   │       │   ├── module_detail.html           # Детальная страница модуля
+│   │       │   ├── module_form.html             # Форма создания/редактирования модуля
+│   │       │   ├── module_list.html             # Список модулей курса
+│   │       │   ├── my_courses.html              # Страница "Мои курсы"
+│   │       │   ├── orders_history.html           # История заказов
+│   │       │   ├── profile_edit.html            # Редактирование профиля
+│   │       │   ├── profile_update.html          # Обновление профиля
+│   │       │   ├── recommendation_test.html     # Тест подбора курсов
+│   │       │   ├── support_requests_list.html   # Список обращений в поддержку
+│   │       │   ├── tutors.html                  # Список преподавателей
+│   │       │   └── includes/                    # Включаемые шаблоны
+│   │       │       └── messages.html            # Шаблон для отображения сообщений
+│   │       └── registration/                    # Шаблоны регистрации
+│   │           ├── login.html                   # Страница входа
+│   │           └── register.html                # Страница регистрации
+│   ├── studyhub/                                # Настройки проекта
+│   │   ├── __init__.py
+│   │   ├── settings.py                          # Конфигурация Django
+│   │   ├── urls.py                              # Главные URL-маршруты
+│   │   ├── wsgi.py                              # WSGI-конфигурация
+│   │   └── asgi.py                              # ASGI-конфигурация
+│   ├── media/                                   # Загруженные файлы (аватары)
+│   │   └── avatars/                             # Папка для аватаров пользователей
+│   ├── db.sqlite3                               # База данных SQLite (не в git)
+│   └── manage.py                                # Утилита управления Django
+├── venv/                                        # Виртуальное окружение Python (не в git)
+├── .gitignore                                   # Файл исключений для git
+├── requirements.txt                             # Зависимости проекта
+├── README.md                                    # Документация (этот файл)
+└── docs/                                        # Дополнительная документация
+    ├── er_diagram.png                           # ER-диаграмма БД
+    ├── architecture.png                         # Архитектурная схема
+    └── screenshots/                             # Скриншоты приложения
+        ├── home.png                             # Скриншот главной страницы
+        ├── courses.png                          # Скриншот каталога курсов
+        ├── course_detail.png                    # Скриншот детальной страницы курса
+        ├── my_courses.png                       # Скриншот страницы "Мои курсы"
+        └── cart.png                             # Скриншот корзины
 ```
 
 ## Дополнительная информация
